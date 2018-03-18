@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MDPyramid
 {
@@ -24,5 +12,18 @@ namespace MDPyramid
         {
             InitializeComponent();
         }
+
+        //private void Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var sw = Stopwatch.StartNew();
+        //    Test<Method2>.All(false);
+        //    MessageBox.Show(sw.Elapsed.ToString());
+        //    sw = Stopwatch.StartNew();
+        //    Test<PrimitiveMethod>.All(false);
+        //    MessageBox.Show(sw.Elapsed.ToString());
+        //    sw = Stopwatch.StartNew();
+        //    Test<Method3>.All(false);
+        //    MessageBox.Show(sw.Elapsed.ToString());
+        //}
     }
 }

@@ -54,6 +54,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Method3.cs" />
+    <Compile Include="Method2.cs" />
     <Compile Include="IMethod.cs" />
     <Compile Include="MyExtensions.cs" />
     <Compile Include="PrimitiveMethod.cs" />

@@ -6,7 +6,5 @@
         xmlns:local="clr-namespace:MDPyramid"
         mc:Ignorable="d"
         Title="MDPyramid" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+    <Grid/>
 </Window>

@@ -13,7 +13,7 @@ namespace MDPyramid
     /// </remarks>
     internal class PrimitiveMethod : IMethod
     {
-        private class Node
+        protected class Node
         {
             public int Value { get; private set; }
             public Node BottomNode { get; private set; }
@@ -27,7 +27,7 @@ namespace MDPyramid
             }
         }
 
-        private static bool IsEven(Node node)
+        protected static bool IsEven(Node node)
         {
             return node.Value % 2 == 0;
         }
@@ -37,9 +37,9 @@ namespace MDPyramid
         /// </summary>
         /// <param name="rootNode"></param>
         /// <param name="bottomNode"><see cref="Node.BottomNode"/> or <see cref="Node.BottomRight"/> of <paramref name="rootNode"/>.</param>
-        private static void TryEvaluate(Node rootNode, Node bottomNode, out int maxSum, out List<int> maxSumPath)
+        private static void EvaluatePart(Node rootNode, Node bottomNode, out int maxSum, out List<int> maxSumPath)
         {
-            if (bottomNode == null) throw new ArgumentNullException(nameof(bottomNode));
+            // "You should walk over the numbers as evens and odds subsequently."
             if (IsEven(rootNode) == IsEven(bottomNode))
             {
                 maxSum = 0;
@@ -47,11 +47,11 @@ namespace MDPyramid
             }
             else
             {
-                GetMaxPath(bottomNode, out maxSum, out maxSumPath);
+                Evaluate(bottomNode, out maxSum, out maxSumPath);
             }
         }
 
-        private static void GetMaxPath(Node rootNode, out int maxSum, out List<int> maxSumPath)
+        private static void Evaluate(Node rootNode, out int maxSum, out List<int> maxSumPath)
         {
             if (rootNode.BottomNode == null)
             {
@@ -60,8 +60,8 @@ namespace MDPyramid
             }
             else
             {
-                TryEvaluate(rootNode, rootNode.BottomNode, out int downwardsSum, out List<int> downwardsPath);
-                TryEvaluate(rootNode, rootNode.BottomRight, out int diagSum, out List<int> diagPath);
+                EvaluatePart(rootNode, rootNode.BottomNode, out int downwardsSum, out List<int> downwardsPath);
+                EvaluatePart(rootNode, rootNode.BottomRight, out int diagSum, out List<int> diagPath);
                 if (diagSum < downwardsSum)
                 {
                     maxSum = downwardsSum;
@@ -75,6 +75,11 @@ namespace MDPyramid
                 maxSum += rootNode.Value;
                 maxSumPath.Insert(0, rootNode.Value);
             }
+        }
+
+        protected virtual void OnGetMaxPath(Node rootNode, out int maxSum, out List<int> maxSumPath)
+        {
+            Evaluate(rootNode, out maxSum, out maxSumPath);
         }
 
         private static char[] whitespace = new[] { ' ', '\t' };
@@ -137,7 +142,7 @@ namespace MDPyramid
         /// <remarks>
         /// Method does not use <see cref="Char.IsWhiteSpace"/> for clarity.
         /// </remarks>
-        private static Node Parse(string input)
+        private Node Parse(string input)
         {
             Node[] lastRow = null;
             int? lastIndex = null;
@@ -184,7 +189,7 @@ namespace MDPyramid
                 if (numbers.Count > 0)
                 {
                     var row = new Node[numbers.Count];
-                    for (i = 0; i < row.Length; i++) row[i] = new Node(numbers.Pop(), lastRow?[i], lastRow?[i + 1]);
+                    for (i = 0; i < row.Length; i++) row[i] = OnCreateNode(numbers.Pop(), lastRow?[i], lastRow?[i + 1]);
                     lastRow = row;
                 }
                 else
@@ -194,6 +199,11 @@ namespace MDPyramid
             }
             if (lastRow.Length > 1) throw new Exception("Missing common root (" + lastRow.Select((x) => x.Value).ToStringAggregate() + ").");
             return lastRow.FirstOrDefault();
+        }
+
+        protected virtual Node OnCreateNode(int value, Node bottomNode, Node bottomRight)
+        {
+            return new Node(value, bottomNode, bottomRight);
         }
 
         void IMethod.TestParser()
@@ -223,7 +233,7 @@ namespace MDPyramid
 
         public int[] Run(string input)
         {
-            GetMaxPath(Parse(input), out int maxSum, out List<int> maxSumPath);
+            OnGetMaxPath(Parse(input), out int maxSum, out List<int> maxSumPath);
             return maxSumPath.ToArray();
         }
     }
